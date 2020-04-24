@@ -1,9 +1,32 @@
 const express = require("express");
-
+const mongoose = require("mongoose");
+const path = require("path");
 const app = express();
+const dotenv = require("dotenv");
+const authController = require("./controller/auth");
+dotenv.config();
 
-app.use((req, res, next) => {
-	res.status(200).json({ msg: "success" });
+const MONGO_URI = process.env.MONGO_URI;
+app.use(express.urlencoded({ extended: false }));
+app.set("view-engine", "ejs");
+app.use(express.static("public"));
+
+app.get("/login", authController.getLogin);
+
+app.post("/login", authController.postLogin);
+
+app.use((err, req, res, next) => {
+	res.render(err.page, {
+		error: { statusCode: err.statusCode, msg: err.message },
+		values: err.values || null,
+	});
 });
 
-app.listen(3000);
+mongoose
+	.connect(MONGO_URI)
+	.then(() => {
+		app.listen(3000);
+	})
+	.catch((err) => {
+		console.log(err);
+	});

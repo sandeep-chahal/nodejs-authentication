@@ -1,0 +1,19 @@
+<html>
+	<%- include("./includes/header.ejs")%>
+	<body>
+		<form method="post" action="/login">
+			<%if(error){%>
+			<div><%=error.msg%></div>
+			<%}%>
+			<input
+				type="email"
+				placeholder="Email"
+				name="email"
+				value="<%if(values){%><%=values.email%><%}%>"
+			/>
+			<input type="password" placeholder="Password" name="password" />
+			<button type="submit">Login</button>
+			<span>Create an Account!</span>
+		</form>
+	</body>
+</html>
