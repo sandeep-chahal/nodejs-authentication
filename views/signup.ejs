@@ -1,10 +1,16 @@
 <html>
 	<%- include("./includes/header.ejs")%>
 	<body>
-		<form method="post" action="/login">
+		<form method="post" action="/signup">
 			<%if(error){%>
 			<div><%=error.msg%></div>
 			<%}%>
+			<input
+				type="text"
+				placeholder="Name"
+				name="name"
+				value="<%if(values){%><%=values.name%><%}%>"
+			/>
 			<input
 				type="email"
 				placeholder="Email"
@@ -12,8 +18,8 @@
 				value="<%if(values){%><%=values.email%><%}%>"
 			/>
 			<input type="password" placeholder="Password" name="password" />
-			<button type="submit">Login</button>
-			<span><a href="/signup">Create an Account!</a></span>
+			<button type="submit">Signup</button>
+			<span>Already have an accoun? <a href="/login">Login</a></span>
 		</form>
 	</body>
 </html>

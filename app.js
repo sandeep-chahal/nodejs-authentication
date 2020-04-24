@@ -12,13 +12,15 @@ app.set("view-engine", "ejs");
 app.use(express.static("public"));
 
 app.get("/login", authController.getLogin);
+app.get("/signup", authController.getSingup);
 
 app.post("/login", authController.postLogin);
+app.post("/signup", authController.postSignup);
 
 app.use((err, req, res, next) => {
 	res.render(err.page, {
 		error: { statusCode: err.statusCode, msg: err.message },
-		values: err.values || null,
+		values: err.options.values || null,
 	});
 });
 
