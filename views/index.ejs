@@ -1,1 +1,29 @@
-<h1>Hello</h1>
+<%-include("./includes/header",{title:"home"})%>
+<body>
+	<div id="timer"><%=expiresIn%></div>
+	<div id="check">Request</div>
+	<script>
+		const timer = document.getElementById("timer");
+		const checkBtn = document.getElementById("check");
+		let value = parseInt(timer.innerText);
+		const timerInterval = setInterval(() => {
+			value -= 1;
+			if (value < 0) {
+				clearInterval(timerInterval);
+				redirect();
+			} else timer.innerText = value;
+		}, 1000);
+		function redirect() {
+			window.location.replace("/login");
+		}
+		checkBtn.addEventListener("click", check);
+		function check() {
+			fetch("/check")
+				.then((res) => res.json())
+				.then((data) => {
+					if (data.msg === "success") alert("Success");
+					else if (data.msg === "unauth") redirect();
+				});
+		}
+	</script>
+</body>

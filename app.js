@@ -39,8 +39,16 @@ const isAuth = (req, res, next) => {
 
 app.get("/", (req, res, next) => {
 	if (!req.session.user) return res.redirect("/login");
-	console.log(req.session.user);
-	res.json({ msg: "woooohoooooooo" });
+	res.render("index.ejs", {
+		expiresIn: parseInt(
+			(new Date(req.session.cookie._expires) - new Date()) / 1000
+		),
+	});
+});
+
+app.get("/check", (req, res, next) => {
+	if (req.session.user) res.json({ msg: "success" });
+	else res.json({ msg: "unauth" });
 });
 
 app.get("/login", isAuth, authController.getLogin);
@@ -50,9 +58,9 @@ app.post("/login", isAuth, authController.postLogin);
 app.post("/signup", isAuth, authController.postSignup);
 
 app.use((err, req, res, next) => {
-	res.render(err.page, {
+	res.render(err.page || "/login", {
 		error: { statusCode: err.statusCode, msg: err.message },
-		values: err.options.values || null,
+		values: err.options ? err.options.values || null : null,
 	});
 });
 
