@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const path = require("path");
 const app = express();
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
@@ -23,22 +22,32 @@ app.use(
 		saveUninitialized: false,
 		resave: false,
 		cookie: {
-			maxAge: 60000,
+			// maxAge: 1000 * 60 * 60 * 24 * 30,
+			maxAge: 1000 * 60 * 5,
 			sameSite: true,
 		},
 	})
 );
 
+const isAuth = (req, res, next) => {
+	if (req.session.user) {
+		res.redirect("/");
+	} else {
+		next();
+	}
+};
+
 app.get("/", (req, res, next) => {
+	if (!req.session.user) return res.redirect("/login");
 	console.log(req.session.user);
 	res.json({ msg: "woooohoooooooo" });
 });
 
-app.get("/login", authController.getLogin);
-app.get("/signup", authController.getSingup);
+app.get("/login", isAuth, authController.getLogin);
+app.get("/signup", isAuth, authController.getSingup);
 
-app.post("/login", authController.postLogin);
-app.post("/signup", authController.postSignup);
+app.post("/login", isAuth, authController.postLogin);
+app.post("/signup", isAuth, authController.postSignup);
 
 app.use((err, req, res, next) => {
 	res.render(err.page, {
