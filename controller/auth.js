@@ -33,8 +33,11 @@ exports.postLogin = async (req, res, next) => {
 			return next(err);
 		}
 		const isCorrect = await bcrypt.compare(password, user.password);
-		if (isCorrect) res.redirect("/");
-		else {
+		if (isCorrect) {
+			req.session.user = user._id;
+			const err = await req.session.save();
+			res.redirect("/");
+		} else {
 			const err = throwError("login.ejs", "Invalid Password", 401, {
 				values: { email },
 			});
